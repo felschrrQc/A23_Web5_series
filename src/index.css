@@ -1,0 +1,14 @@
+ul {
+    list-style-type: none;
+}
+.thumb {
+    height: 220px;
+}
+article {
+    text-align: center;
+    margin-bottom: 25px;
+    overflow: hidden;
+}
+article h1 {
+    text-transform: capitalize;
+}
