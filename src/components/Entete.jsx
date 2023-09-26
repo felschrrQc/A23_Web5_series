@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
-import StarRatings from 'react-star-ratings';
-import UserAction from './UserAction';
-import { AiFillEye, AiOutlineEyeInvisible } from 'react-icons/ai';
-import getUnicodeFlagIcon from 'country-flag-icons/unicode';
+import { useState } from 'react';
+import StarRatings from "react-star-ratings";
+import { UserAction } from "../components";
+import { AiFillEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 function statusTranslate(status) {
   const statusMap = {
@@ -18,82 +17,92 @@ function statusTranslate(status) {
   return statusMap[status] || status;
 }
 
-const Entete = ({ serie, episodes }) => {
+const Entete = ({ details, addToFavorites }) => {
+
   const [showEpisodes, setShowEpisodes] = useState(false);
+  const [estFavori, setEstFavori] = useState(false);
+
+  const handleAddToFavorites = () => {
+    setEstFavori(!estFavori)
+    addToFavorites(details);
+  };
 
   const toggleEpisodes = () => {
     setShowEpisodes(!showEpisodes);
   };
 
-  const episodesList = episodes.map((episode) => (
-    <li key={episode.number}>
-      <strong>Saison {parseInt(episode.number)+1}</strong> - {episode.episodes.length} Épisodes
+  const episodesList = details.seasons.map((season) => (
+    <li key={season.number}>
+      <strong>Saison {season.number}</strong> - {season.episodes.length} Épisodes
     </li>
   ));
 
   return (
-    <div className="informations">
-      <ul className="listeInfos">
+    <div className="infos">
+      <ul className="listeInfos flex flex-wrap justify-between items-center">
         <div className="recapSerie">
-          <li className='title'>
-              <h2>{serie.title}</h2>
-              <h6>{serie.tagline}</h6>
+          <li className="title my-2">
+            <h2 className="text-4xl font-bold dark:text-white">{details.title}</h2>
+            <h6 className="text-2xl font-bold dark:text-white">{details.tagline}</h6>
           </li>
           <li className="synopsis">
-            <span><strong>Synopsis : </strong>{serie.overview}</span>
-          </li>
-          <li className='rating'>
-            <span>
-              <strong>Note : </strong>
-              <StarRatings
-                rating={~~(serie.rating / 2)}
-                starDimension="16px"
-                starSpacing="2px"
-              /> sur {serie.votes} votes
-            </span>
+            <span className="text-white"><strong>Synopsis : </strong>{details.overview}</span>
           </li>
         </div>
-        <div className="infosSerie">
+        <div className="infosSerie my-2">
           <li className="genre">
-            <span><strong>Genre : </strong>{serie.genres.map((genre, index) => (
-              <span key={index}>{genre.charAt(0).toUpperCase() + genre.slice(1)}{index !== serie.genres.length - 1 ? ', ' : ''}</span>
+            <span className="text-white"><strong>Genre : </strong>{details.genres.map((genre, index) => (
+              <span key={index}>{genre.charAt(0).toUpperCase() + genre.slice(1)}{index !== details.genres.length - 1 ? ', ' : ''}</span>
             ))}</span>
           </li>
           <li className="status">
-            <span><strong>Statut : </strong>{statusTranslate(serie.status)}</span>
+            <span className="text-white"><strong>Statut : </strong>{statusTranslate(details.status)}</span>
           </li>
           <li className="airedEpisodes">
-            <span><strong>Nombre d'épisodes : </strong>{serie.aired_episodes}</span>
+            <span className="text-white"><strong>Épisodes sortis : </strong>{details.aired_episodes}</span>
           </li>
         </div>
-        <div className="production">
+        <div className="production my-2">
           <li className="year">
-            <span><strong>Année de production : </strong>{serie.year}</span>
+            <span className="text-white"><strong>Année de production : </strong>{details.year}</span>
           </li>
           <li className="country">
-            <span><strong>Pays d'origine : </strong>{getUnicodeFlagIcon(serie.country)}</span>
+            <span className="text-white"><strong>Pays d'origine : </strong>{details.country.toUpperCase()}</span>
           </li>
           <li className="network">
-            <span><strong>Plateforme : </strong>{serie.network}</span>
+            <span className="text-white"><strong>Plateforme : </strong>{details.network}</span>
           </li>
         </div>
-
-        <li className='showSeasonBtn'>
-          <button onClick={toggleEpisodes}>
+        </ul>
+        <div className="userActions my-2">
+          <div className="rating my-2">
+            <span className="text-white">
+              <strong>Note : </strong>
+              <StarRatings
+                rating={~~(details.rating / 2)}
+                starDimension="16px"
+                starSpacing="2px"
+              /> sur {details.votes} votes
+            </span>
+          </div>
+          <UserAction serie={details}/>
+          <button
+            id="favoriteBtn"
+            className={`my-2 text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700${estFavori ? 'favorite' : ''}`}
+            onClick={handleAddToFavorites}>
+            {estFavori ? ' Enlever des ❤️' : 'Ajouter aux 🤍'}
+          </button>
+        </div>
+        <div className="showSeasonBtn my-2">
+          <button onClick={toggleEpisodes} className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
             {showEpisodes ? <><AiOutlineEyeInvisible /> Épisodes par Saison</> : <><AiFillEye /> Épisodes par Saison</>}
           </button>
-        </li>
+        </div>
         {showEpisodes && (
-          <li className='listeEpisodesSaisons'>
-            <ul>
+          <ul className="listeEpisodesSaisons">
               {episodesList}
-            </ul>
-          </li>
+          </ul>
         )}
-      </ul>
-      <div className='userActions'>
-        <UserAction />
-      </div>
     </div>
   );
 };

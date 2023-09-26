@@ -1,8 +1,7 @@
-import React, {useState} from 'react';
+import {useState} from 'react';
 import StarRatings from 'react-star-ratings';
-import FavoriteButton from './FavoriteButton';
 
-const UserAction = ({  }) => {
+const UserAction = () => {
     const [userRating, setUserRating] = useState(0);
     const handleUserRatingChange = (newRating) => {
       setUserRating(newRating);
@@ -10,7 +9,7 @@ const UserAction = ({  }) => {
 
     return (
         <div className='userAction'>
-            <span>
+            <div>
                 <strong>Votre note : </strong>
                 <StarRatings
                 rating={userRating}
@@ -18,8 +17,7 @@ const UserAction = ({  }) => {
                 starSpacing="2px"
                 changeRating={handleUserRatingChange}
                 />
-            </span>
-            <FavoriteButton/>
+            </div>
         </div>
     );
 };

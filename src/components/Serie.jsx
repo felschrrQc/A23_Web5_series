@@ -1,17 +1,19 @@
-import React from 'react';
-import Entete from "./Entete";
-import Photo from "./Photo";
-import Trailer from "./Trailer";
-import './Serie.css';
+import { Entete, Photo, Trailer } from '../components';
 
-const Serie = ({ serie, episodes }) => {
+const Serie = ({ serie, details, addToFavorites, estFavori }) => {
   return (
-    <div className="serie">
-        <div className="serie-container">
-            <Photo url={serie.poster} />
-            <Entete serie={serie} episodes={episodes} />
+    <div className="serie w-2/3 border-2 border-white rounded-lg p-8 m-8 bg-gray-900 mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+        <div className="col-span-1">
+          <Photo url={serie.poster} />
         </div>
-        <Trailer url={serie.trailer} />
+        <div className="col-span-2">
+          <Entete details={details} addToFavorites={addToFavorites } />
+        </div>
+        <div className="col-span-3">
+          <Trailer url={details.trailer} />
+        </div>
+      </div>
     </div>
   );
 };
