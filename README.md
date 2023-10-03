@@ -3,4 +3,4 @@
 Site de visualisation de séries créé avec le framework React
 
 utilisation d'une API pour récupérer les données des séries
-Utilisation de Tailwind & FLowbite pour l'UI
+Utilisation de Tailwind & Flowbite pour l'UI
