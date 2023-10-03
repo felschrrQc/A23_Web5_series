@@ -1,19 +1,27 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 
 const SearchBar = ({ onSearch }) => {
   const [inputSearch, setInputSearch] = useState("");
   const navigate = useNavigate();
   const location = useLocation();
 
-  const searchSubmitHandler = async () => {
-    // Redirige uniquement si l'utilisateur n'est pas déjà sur "/search"
-    if (location.pathname !== "/search") {
-        navigate("/search");
-      }
+  useEffect(() => {
+    // Met la valeur de la recherche dans l'input lorsque l'utilisateur est sur "/search"
+    const searchParams = new URLSearchParams(location.search);
+    const searchQuery = searchParams.get("q");
 
+    if (location.pathname === "/search" && searchQuery) {
+      setInputSearch(searchQuery);
+
+      // Déclenche la recherche après la redirection
+      performSearch(searchQuery);
+    }
+  }, [location]);
+
+  const performSearch = async (query) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/series/search/?q=${inputSearch}`);
+      const response = await fetch(`http://localhost:3000/api/series/search/?q=${query}`);
       const data = await response.json();
       onSearch(data.series);
     } catch (error) {
@@ -21,8 +29,14 @@ const SearchBar = ({ onSearch }) => {
     }
   };
 
-  useEffect(() => {
-  }, [inputSearch]);
+  const searchSubmitHandler = async () => {
+    if (inputSearch.trim() !== "") {
+      if (location.pathname !== "/search") {
+        navigate(`/search?q=${inputSearch}`);
+      }
+      performSearch(inputSearch);
+    }
+  };
 
   return (
     <form onSubmit={(e) => e.preventDefault()} className="w-1/2">

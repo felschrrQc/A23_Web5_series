@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import StarRatings from "react-star-ratings";
 import { UserAction } from "../components";
 import { AiFillEye, AiOutlineEyeInvisible } from "react-icons/ai";
@@ -11,19 +11,28 @@ function statusTranslate(status) {
     'planned': 'Prévue',
     'upcoming': 'À venir',
     'canceled': 'Annulée',
-    'ended': 'Finie',
+    'ended': 'Terminée',
   };
 
   return statusMap[status] || status;
 }
 
-const Entete = ({ details, addToFavorites }) => {
+const Entete = ({ details, addToFavorites, favoritesSeries }) => {
 
+  console.log("favoritesSeries: ", favoritesSeries)
   const [showEpisodes, setShowEpisodes] = useState(false);
   const [estFavori, setEstFavori] = useState(false);
 
+  useEffect(() => {
+    // Vérifier si la série est dans les favoris
+    const isFavorite = favoritesSeries && favoritesSeries.some((favSerie) => favSerie.id === details.id);
+    setEstFavori(isFavorite);
+  }, [favoritesSeries, details.id]);
+  
+  
+
   const handleAddToFavorites = () => {
-    setEstFavori(!estFavori)
+    setEstFavori(!estFavori);
     addToFavorites(details);
   };
 

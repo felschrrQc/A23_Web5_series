@@ -4,12 +4,21 @@ import Home from "./Home";
 import Layout from "./Layout";
 import Profil from "./Profil";
 import Login from "./Login";
-
 import Serie from "./Serie";
 import Search from "./Search";
 import Trending from "./Trending";
+import { useStorage } from "../hooks/UseStorage"
 
 function App() {
+  const { saveToStorage, getFromStorage, removeFromStorage } = useStorage("series-");
+  const savedUser = getFromStorage("user");
+  
+  useEffect(() => {
+    if(savedUser){
+      setUser(savedUser);
+      setLoggedIn(true);
+    };
+  }, []);
 
   const [user, setUser] = useState({
     username: '',
@@ -17,33 +26,20 @@ function App() {
   });
 
   const [loggedIn, setLoggedIn] = useState(false);
-  const [seriesList, setSeriesList] = useState([]);
   const [favoritesSeries, setFavoritesSeries] = useState([]);
-
-  useEffect(() => {
-    //  On récupère les données des séries par l'API
-    const fetchSeries = async () => {
-      try {
-        const resp = await fetch('http://localhost:3000/api/series/trending');
-        const tabSeries = await resp.json();
-        setSeriesList(tabSeries.series);
-      } catch (error) {
-        console.error('Erreur lors de la récupération des données des séries : ', error);
-      }
-    };
-    fetchSeries();
-  }, []);   
+  const [serieId, setSerieId] = useState([]);
 
   // Récupération du nom d'utilisateur + connexion
-  const handleLogin = (newUsername) => {
-    setUser({ ...user, username: newUsername });
+  const handleLogin = (user) => {
+    saveToStorage("user", user)
     setLoggedIn(true);
   };
 
   // Déconnexion + vide les données utilisateurs
   const handleLogout = () => {
+    removeFromStorage("user");
     setLoggedIn(false);
-    setUser({ username: '', password: '' });
+    setUser({ username: '', password: ''});
     setFavoritesSeries([]);
   };
 
@@ -53,6 +49,19 @@ function App() {
     if (!isAlreadyInFavorites) {
       setFavoritesSeries([...favoritesSeries, serieToAdd]);
     }
+    if(isAlreadyInFavorites){
+      removeFromFavorites(serieToAdd)
+    }
+  };
+
+  // Supprime une série des favoris
+  const removeFromFavorites = (serieToRemove) => {
+    const updatedFavorites = favoritesSeries.filter((favSerie) => favSerie.id !== serieToRemove.id);
+    setFavoritesSeries(updatedFavorites);
+  };
+
+  const handleSerieClick = (serieId) => {
+    setSerieId(serieId); // Mise à jour de l'ID de la série dans l'état de l'application
   };
 
   // Routes lorsque l'utilisateur est connecté
@@ -68,19 +77,19 @@ function App() {
         },
         {
           path: '/serie/:slugSerie',
-          element: <Serie seriesList={seriesList} addToFavorites={addToFavorites} />
+          element: <Serie serieId={serieId} addToFavorites={addToFavorites} favoritesSeries={favoritesSeries} />
         },
         {
           path: '/trending',
-          element: <Trending seriesList={seriesList}/>
+          element: <Trending onSerieClick={handleSerieClick}/>
         },
         {
           path: '/search',
-          element: <Search />
+          element: <Search onSerieClick={handleSerieClick}/>
         },
         {
           path: '/profil',
-          element: <Profil user={user} favoritesSeries={favoritesSeries} />
+          element: <Profil user={savedUser} favoritesSeries={favoritesSeries} onSerieClick={handleSerieClick}/>
         },
         {
           path: '/*',

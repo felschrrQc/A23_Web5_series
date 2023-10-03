@@ -3,7 +3,7 @@ import { BiSolidMoviePlay } from 'react-icons/bi';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-const Profil = ({ user, favoritesSeries }) => {
+const Profil = ({ user, favoritesSeries, onSerieClick}) => {
   const [activeTab, setActiveTab] = useState('profile');
   const [userImgUrl, setUserImgUrl] = useState("");
 
@@ -18,7 +18,7 @@ const Profil = ({ user, favoritesSeries }) => {
   };
 
   return (
-    <div className="w-1/2 mx-auto bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 my-32">
+    <div className="w-1/2 mx-auto border rounded-lg shadow bg-gray-800 border-gray-700 my-32">
       <div className="flex flex-wrap flex-row justify-center items-center mt-4">
         <div id="userProfile" className="flex flex-col items-center pb-10 px-4 pt-4">
           <img
@@ -26,18 +26,18 @@ const Profil = ({ user, favoritesSeries }) => {
             src={userImgUrl}
             alt={user.username + " profile picture"}
           />
-          <h5 id="username" className="mb-1 text-xl font-bold text-gray-900 dark:text-white">{user.username}</h5>
-          <h6 id="nbSeriesFav" className="text-lg font-medium dark:text-white">
+          <h5 id="username" className="mb-1 text-xl font-bold text-white">{user.username}</h5>
+          <h6 id="nbSeriesFav" className="text-lg font-medium text-white">
             <BiSolidMoviePlay className='display: inline mx-2' />{"Nombre de séries favorites : " + favoritesSeries.length}
           </h6>
         </div>
-        <div id="tabs" className="w-full text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:text-gray-400 dark:border-gray-700">
+        <div id="tabs" className="w-full text-sm font-medium text-center border-b text-gray-400 border-gray-700">
           <ul className="flex flex-wrap -mb-px border-b border-gray-700">
             <li className="mr-2">
               <Link
                 className={`inline-block p-4 ${
-                  activeTab === 'profile' ? 'border-b-2 border-blue-600 dark:border-blue-500' : 'border-transparent'
-                } rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 ${activeTab === 'profile' ? 'active' : ''}`}
+                  activeTab === 'profile' ? 'border-b-2 border-blue-500' : 'border-transparent'
+                } rounded-t-lg hover:text-gray-600 hover:border-gray-300 ${activeTab === 'profile' ? 'active' : ''}`}
                 onClick={() => handleTabChange('profile')}
               >
                 Profile
@@ -46,8 +46,8 @@ const Profil = ({ user, favoritesSeries }) => {
             <li className="mr-2">
               <Link
                 className={`inline-block p-4 ${
-                  activeTab === 'favorites' ? 'border-b-2 border-blue-600 dark:border-blue-500' : 'border-transparent'
-                } rounded-t-lg hover:text-gray-600 hover:border-gray-300 dark:hover:text-gray-300 ${activeTab === 'favorites' ? 'active' : ''}`}
+                  activeTab === 'favorites' ? 'border-b-2 border-blue-600' : 'border-transparent'
+                } rounded-t-lg hover:text-gray-600 hover:border-gray-300 ${activeTab === 'favorites' ? 'active' : ''}`}
                 onClick={() => handleTabChange('favorites')}
               >
                 Favoris
@@ -59,19 +59,21 @@ const Profil = ({ user, favoritesSeries }) => {
             {activeTab === 'profile' && (
               <div>
                 <div id="profile">
-                  Insérer plus tard le contenu pour l'onglet Profile
+                  <div className="m-8">
+                  <p className="text-gray-500">Insérer plus tard le contenu pour l'onglet Profile</p>
+                  </div>
                 </div>
               </div>
             )}
             {activeTab === 'favorites' && (
               <div>
                 {favoritesSeries.length === 0 ? (
-                  <div className="mx-32 text-center">
+                  <div className="m-8 text-center">
                     <p className="text-gray-500">Il n'y a aucune série disponible pour le moment.</p>
                   </div>
                 ) : (
                   <div id="favorites" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-center p-8">
-                    <ListeSeries tabSeries={favoritesSeries} />
+                    <ListeSeries tabSeries={favoritesSeries} onSerieClick={onSerieClick} />
                   </div>
                 )}
               </div>

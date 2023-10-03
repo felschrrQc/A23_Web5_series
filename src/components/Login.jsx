@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { MD5 } from 'crypto-js';
 import { Navigate } from 'react-router-dom';
 
 const Login = ({ onLogin }) => {
@@ -9,12 +10,10 @@ const Login = ({ onLogin }) => {
   const [loggedIn, setLoggedIn] = useState(false);
 
   const handleLogin = () => {
-    if (user.username.trim() === '' || user.password.trim() === '') {
-      alert('Veuillez remplir tous les champs.');
-    } else {
-      setLoggedIn(true);
-      onLogin(user.username);
-    }
+    // Chiffrer le mot de passe avec MD5 avant de le stocker
+    const encryptedPassword = MD5(user.password).toString();
+    onLogin({ ...user, password: encryptedPassword });
+    setLoggedIn(true);
   };
 
   const handleFormSubmit = (e) => {
@@ -38,6 +37,7 @@ const Login = ({ onLogin }) => {
             placeholder="Nom d'utilisateur..."
             value={user.username}
             onChange={(e) => setUser({ ...user, username: e.target.value })}
+            required
           />
         </div>
         <div className="mb-6">
@@ -51,6 +51,7 @@ const Login = ({ onLogin }) => {
             placeholder="Mot de passe..."
             value={user.password}
             onChange={(e) => setUser({ ...user, password: e.target.value })}
+            required
           />
         </div>
         <button
