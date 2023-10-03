@@ -88,13 +88,13 @@ const Entete = ({ details, addToFavorites }) => {
           <UserAction serie={details}/>
           <button
             id="favoriteBtn"
-            className={`my-2 text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700${estFavori ? 'favorite' : ''}`}
+            className={`my-2 text-white bg-gray-500 hover:bg-gray700 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700${estFavori ? 'favorite' : ''}`}
             onClick={handleAddToFavorites}>
             {estFavori ? ' Enlever des ❤️' : 'Ajouter aux 🤍'}
           </button>
         </div>
         <div className="showSeasonBtn my-2">
-          <button onClick={toggleEpisodes} className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
+          <button onClick={toggleEpisodes} className="text-white bg-gray-500 hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
             {showEpisodes ? <><AiOutlineEyeInvisible /> Épisodes par Saison</> : <><AiFillEye /> Épisodes par Saison</>}
           </button>
         </div>

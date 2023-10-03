@@ -3,9 +3,13 @@
 @tailwind utilities;
 
 .active{
-    color: #1D4ED8;
+    color: #1D4ED8 !important;
 }
 
 button > svg {
-    display: inline;
+    display: inline !important;
+}
+
+#login{
+    color: white !important;
 }
