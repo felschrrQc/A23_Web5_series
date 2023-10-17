@@ -10,16 +10,13 @@ import Trending from "./Trending";
 import { useStorage } from "../hooks/UseStorage"
 
 function App() {
-  const { saveToStorage, getFromStorage, removeFromStorage } = useStorage("series-");
+  const { saveToStorage, getFromStorage, removeFromStorage } = useStorage("A23_Web5_series-");
   const savedUser = getFromStorage("user");
+  let savedFavoritesSeries = getFromStorage("favoritesSeries");
+  if(savedFavoritesSeries === null) {
+    savedFavoritesSeries = [];
+  }
   
-  useEffect(() => {
-    if(savedUser){
-      setUser(savedUser);
-      setLoggedIn(true);
-    };
-  }, []);
-
   const [user, setUser] = useState({
     username: '',
     password: '',
@@ -28,6 +25,15 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [favoritesSeries, setFavoritesSeries] = useState([]);
   const [serieId, setSerieId] = useState([]);
+  
+  useEffect(() => {
+    if(savedUser){
+      setUser(savedUser);
+      setFavoritesSeries(savedFavoritesSeries);
+      setLoggedIn(true);
+    };
+  }, []);
+
 
   // Récupération du nom d'utilisateur + connexion
   const handleLogin = (user) => {
@@ -37,31 +43,34 @@ function App() {
 
   // Déconnexion + vide les données utilisateurs
   const handleLogout = () => {
-    removeFromStorage("user");
-    setLoggedIn(false);
     setUser({ username: '', password: ''});
+    removeFromStorage("user");
     setFavoritesSeries([]);
+    removeFromStorage("favoritesSeries");
+    setLoggedIn(false);
   };
 
   // Ajoute une série aux favoris & empêche d'ajouter plusieurs fois la même série 
   const addToFavorites = (serieToAdd) => {
-    const isAlreadyInFavorites = favoritesSeries.some((favSerie) => favSerie.id === serieToAdd.id);
-    if (!isAlreadyInFavorites) {
-      setFavoritesSeries([...favoritesSeries, serieToAdd]);
-    }
-    if(isAlreadyInFavorites){
-      removeFromFavorites(serieToAdd)
-    }
-  };
+    setFavoritesSeries((prevFavorites) => {
+      const isAlreadyInFavorites = prevFavorites.some((favSerie) => favSerie.id === serieToAdd.id);
 
-  // Supprime une série des favoris
-  const removeFromFavorites = (serieToRemove) => {
-    const updatedFavorites = favoritesSeries.filter((favSerie) => favSerie.id !== serieToRemove.id);
-    setFavoritesSeries(updatedFavorites);
-  };
+      //Ajoute la série si elle n'est pas déjà dans le tableau
+      if (!isAlreadyInFavorites) {
+        const updatedFavorites = [...prevFavorites, serieToAdd];
+        saveToStorage("favoritesSeries", updatedFavorites);
+        return updatedFavorites;
+      }
+
+      // Si la série est déjà dans les favoris, la supprimer
+      const updatedFavorites = prevFavorites.filter((favSerie) => favSerie.id !== serieToAdd.id);
+      saveToStorage("favoritesSeries", updatedFavorites);
+      return updatedFavorites;
+    });
+  };  
 
   const handleSerieClick = (serieId) => {
-    setSerieId(serieId); // Mise à jour de l'ID de la série dans l'état de l'application
+    setSerieId(serieId); // Mise à jour de l'ID de la série 
   };
 
   // Routes lorsque l'utilisateur est connecté
@@ -77,7 +86,7 @@ function App() {
         },
         {
           path: '/serie/:slugSerie',
-          element: <Serie serieId={serieId} addToFavorites={addToFavorites} favoritesSeries={favoritesSeries} />
+          element: <Serie serieId={serieId} addToFavorites={addToFavorites} favoritesSeries={savedFavoritesSeries} />
         },
         {
           path: '/trending',
@@ -89,7 +98,7 @@ function App() {
         },
         {
           path: '/profil',
-          element: <Profil user={savedUser} favoritesSeries={favoritesSeries} onSerieClick={handleSerieClick}/>
+          element: <Profil user={savedUser} onSerieClick={handleSerieClick} favoritesSeries={savedFavoritesSeries} />
         },
         {
           path: '/*',

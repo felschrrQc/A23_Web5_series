@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const Profil = ({ user, favoritesSeries, onSerieClick}) => {
-  const [activeTab, setActiveTab] = useState('profile');
+  const [activeTab, setActiveTab] = useState('favorites');
   const [userImgUrl, setUserImgUrl] = useState("");
 
   useEffect(() => {

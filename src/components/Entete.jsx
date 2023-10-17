@@ -18,8 +18,6 @@ function statusTranslate(status) {
 }
 
 const Entete = ({ details, addToFavorites, favoritesSeries }) => {
-
-  console.log("favoritesSeries: ", favoritesSeries)
   const [showEpisodes, setShowEpisodes] = useState(false);
   const [estFavori, setEstFavori] = useState(false);
 
